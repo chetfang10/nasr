@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ماشین‌حساب اقتصادی وام طرح نصر بانک مهر ایران</title>
+
+  <!-- فونت فارسی وزیرمتن از Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- بارگذاری Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            navy: {
+              800: '#1e293b',
+              900: '#0f172a',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- بارگذاری Chart.js برای نمودارهای تعاملی -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+  <!-- هدر اصلی اپلیکیشن -->
+  <header class="bg-navy-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-inner shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-white">
+                ماشین‌حساب اقتصادی وام طرح نصر
+              </h1>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
+                بانک مهر ایران • دو تسهیلاتی
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              محاسبه دقیق دفترچه اقساط دو تسهیلاتی، نرخ واقعی تأمین مالی (IRR) و مقایسه با نرخ نزول بازار
+            </p>
+          </div>
+        </div>
+
+        <!-- دکمه‌های هدر -->
+        <div class="flex items-center gap-2 self-end sm:self-auto">
+          <button id="btnResetTop" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>بازگردانی به پیش‌فرض</span>
+          </button>
+          <button id="btnExportCsvTop" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-teal-600 hover:bg-teal-500 text-white shadow-sm transition-colors cursor-pointer">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>خروجی CSV</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- بدنه اصلی داشبورد -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- ستون ورودی‌ها (راست در RTL) -->
+      <aside class="lg:col-span-4 lg:sticky lg:top-24 space-y-5">
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5">
+          <!-- دکمه‌های سناریوهای آماده -->
+          <div class="mb-4 pb-4 border-b border-slate-100">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-slate-600">سناریوهای آماده (بارگذاری سریع)</span>
+              <span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">واحد: میلیون تومان</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnPresetReal" type="button" class="px-2.5 py-2.5 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer bg-teal-50 border-teal-300 text-teal-900 shadow-xs">
+                <span class="block">سناریوی واقعی شما</span>
+                <span class="block text-[10px] font-medium opacity-80 mt-0.5 tabular-nums">وام ۱۵۰ / سپرده ۸۰ / ۳۰ ماه</span>
+              </button>
+              <button id="btnPreset200" type="button" class="px-2.5 py-2.5 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100">
+                <span class="block">سناریوی نمونه ۲۰۰ م.ت</span>
+                <span class="block text-[10px] font-medium opacity-80 mt-0.5 tabular-nums">وام ۲۰۰ / سپرده ۱۱۰ / ۳۶ ماه</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <!-- ۱. مبلغ سپرده بلوکه‌شده -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputDeposit" class="text-xs sm:text-sm font-semibold text-slate-700">مبلغ سپرده بلوکه‌شده</label>
+                <div class="relative w-32">
+                  <input id="inputDeposit" type="text" inputmode="decimal" dir="ltr" value="80"
+                    class="w-full text-left pl-11 pr-3 py-1.5 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 tabular-nums" />
+                  <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-slate-400 pointer-events-none">م.ت</span>
+                </div>
+              </div>
+              <input id="sliderDeposit" type="range" min="0" max="2000" step="5" value="80"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+            </div>
+
+            <!-- ۲. مبلغ کل وام دریافتی -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputLoan" class="text-xs sm:text-sm font-semibold text-slate-700">مبلغ کل وام دریافتی</label>
+                <div class="relative w-32">
+                  <input id="inputLoan" type="text" inputmode="decimal" dir="ltr" value="150"
+                    class="w-full text-left pl-11 pr-3 py-1.5 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 tabular-nums" />
+                  <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-slate-400 pointer-events-none">م.ت</span>
+                </div>
+              </div>
+              <input id="sliderLoan" type="range" min="10" max="3000" step="5" value="150"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+            </div>
+
+            <!-- ۳. مدت بازپرداخت -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputMonths" class="text-xs sm:text-sm font-semibold text-slate-700">مدت بازپرداخت</label>
+                <div class="relative w-32">
+                  <input id="inputMonths" type="text" inputmode="numeric" dir="ltr" value="30"
+                    class="w-full text-left pl-10 pr-3 py-1.5 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 tabular-nums" />
+                  <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-slate-400 pointer-events-none">ماه</span>
+                </div>
+              </div>
+              <input id="sliderMonths" type="range" min="1" max="120" step="1" value="30"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+            </div>
+
+            <!-- ۴. مدت انتظار اولیه -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputWaitingDays" class="text-xs sm:text-sm font-semibold text-slate-700">مدت انتظار دریافت وام</label>
+                <div class="relative w-32">
+                  <input id="inputWaitingDays" type="text" inputmode="numeric" dir="ltr" value="15"
+                    class="w-full text-left pl-10 pr-3 py-1.5 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 tabular-nums" />
+                  <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[11px] font-medium text-slate-400 pointer-events-none">روز</span>
+                </div>
+              </div>
+              <input id="sliderWaitingDays" type="range" min="0" max="365" step="1" value="15"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+            </div>
+
+            <!-- ۵. نرخ کارمزد اسمی سالانه -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputAnnualFee" class="text-xs sm:text-sm font-semibold text-slate-700">نرخ کارمزد اسمی سالانه</label>
+                <div class="relative w-32">
+                  <input id="inputAnnualFee" type="text" inputmode="decimal" dir="ltr" value="4"
+                    class="w-full text-left pl-9 pr-3 py-1.5 text-sm font-bold text-slate-900 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 tabular-nums" />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 pointer-events-none">٪</span>
+                </div>
+              </div>
+              <input id="sliderAnnualFee" type="range" min="0" max="40" step="0.5" value="4"
+                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+            </div>
+
+            <!-- ۶. نرخ نزول ماهانه / هزینه فرصت بازار -->
+            <div class="p-3.5 rounded-xl bg-teal-50/80 border border-teal-200/80 space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <label for="inputMarketRate" class="text-xs sm:text-sm font-bold text-teal-900">نرخ نزول / فرصت ماهانه</label>
+                <div class="relative w-32">
+                  <input id="inputMarketRate" type="text" inputmode="decimal" dir="ltr" value="8"
+                    class="w-full text-left pl-9 pr-3 py-1.5 text-sm font-extrabold text-teal-900 bg-white border border-teal-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 tabular-nums" />
+                  <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-teal-600 pointer-events-none">٪</span>
+                </div>
+              </div>
+              <input id="sliderMarketRate" type="range" min="0" max="30" step="0.25" value="8"
+                class="w-full h-2 bg-teal-200 rounded-lg appearance-none cursor-pointer accent-teal-700" />
+              <div class="flex justify-between text-[11px] text-teal-700/80 tabular-nums">
+                <span>۰٪</span>
+                <span>۱۵٪</span>
+                <span>۳۰٪ ماهانه</span>
+              </div>
+            </div>
+
+            <!-- ۷. روش محاسبه اقساط -->
+            <div class="pt-3 border-t border-slate-100 space-y-2">
+              <label for="selectMethod" class="block text-xs font-bold text-slate-700">روش محاسبه اقساط بانک</label>
+              <select id="selectMethod" class="w-full px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-800 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 cursor-pointer">
+                <option value="nasr_dual_exact" selected>طرح نصر دو تسهیلاتی (دقیقاً مطابق دفترچه اقساط بانک)</option>
+                <option value="nasr_dual_anniversary">طرح نصر دو تسهیلاتی (کارمزد سالانه روی مانده در ماه‌های ۱، ۱۳، ۲۵...)</option>
+                <option value="pmt">قسط مساوی بانکی (PMT روی کل وام)</option>
+                <option value="declining">کاهشی (اصل مساوی + کارمزد ماهانه روی مانده کل وام)</option>
+              </select>
+              <p id="methodDescription" class="text-[11px] text-slate-500 leading-relaxed">
+                وام به دو تسهیلات مجزا تفکیک می‌شود: بخش سپرده بدون کارمزد و بخش مازاد با قسط کارمزد در ماه اول و اقساط یکسان رُندشده به هزار تومان.
+              </p>
+            </div>
+
+            <!-- ۸. تیک تنزیل وام بر اساس دوره انتظار -->
+            <label for="checkDiscountLoan" class="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200/80 cursor-pointer hover:bg-slate-100/70 transition-colors">
+              <input id="checkDiscountLoan" type="checkbox" checked class="mt-0.5 w-4 h-4 rounded border-slate-300 text-teal-700 focus:ring-teal-500 accent-teal-700 cursor-pointer shrink-0" />
+              <span class="text-xs text-slate-700 leading-relaxed">
+                <strong class="font-semibold block text-slate-800">تنزیل مبلغ وام بر اساس دوره انتظار</strong>
+                <span class="text-[11px] text-slate-500">در حالت فعال (پیش‌فرض)، دریافت وام در زمان پایان دوره انتظار تنزیل می‌شود تا Net PV Cost دقیقاً با IRR هم‌تراز باشد.</span>
+              </span>
+            </label>
+
+            <!-- دکمه بازگردانی داخل پنل ورودی (مفید در موبایل) -->
+            <button id="btnResetInline" type="button" class="w-full py-2.5 px-4 rounded-xl text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200/80 transition-colors flex items-center justify-center gap-1.5 cursor-pointer">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>بازگردانی به پیش‌فرض (۱۵۰ / ۸۰ میلیون)</span>
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <!-- ستون نتایج، تفکیک تسهیلات، نمودارها و جدول (چپ در RTL) -->
+      <div class="lg:col-span-8 space-y-6">
+
+        <!-- بنر هشدار نقدینگی صفر یا منفی -->
+        <div id="liquidityWarning" class="hidden rounded-2xl bg-amber-50 border border-amber-300 p-4 shadow-sm">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div class="text-xs sm:text-sm text-amber-900 leading-relaxed">
+              <h3 class="font-bold mb-0.5">هشدار: نقدینگی واقعی اولیه صفر یا منفی است!</h3>
+              <p id="liquidityWarningText">مبلغ سپرده بلوکه‌شده بیشتر یا مساوی مبلغ وام است؛ بنابراین نقدینگی خالصی در شروع دریافت نمی‌کنید.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ۱. بنر هوشمند تصمیم‌گیری اقتصادی (IRR در برابر نرخ نزول) -->
+        <section id="decisionBanner" class="rounded-2xl border p-5 sm:p-6 shadow-sm transition-all duration-200 bg-emerald-50/80 border-emerald-200">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-black/10">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span id="decisionBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-600 text-white shadow-sm">
+                  وام به‌صرفه‌تر از نزول بازار است
+                </span>
+                <span class="text-xs font-medium text-slate-600">مبنای اصلی تصمیم‌گیری: نرخ واقعی تأمین مالی (IRR)</span>
+              </div>
+              <h2 id="decisionHeadline" class="text-base sm:text-lg font-extrabold text-slate-900 pt-1">
+                در حال محاسبه...
+              </h2>
+              <p id="decisionSubtext" class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                در حال تحلیل جریان‌های نقدی...
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+            <div class="bg-white/95 rounded-xl p-3.5 border border-slate-200/80 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">نرخ واقعی ماهانه وام (IRR)</div>
+              <div id="heroIrrMonthly" class="text-2xl sm:text-3xl font-black text-teal-800 mt-1 tabular-nums">—</div>
+              <div class="text-[11px] text-slate-500 mt-1">هزینه واقعی ماهانه سرمایه</div>
+            </div>
+
+            <div class="bg-white/95 rounded-xl p-3.5 border border-slate-200/80 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">نرخ مؤثر سالانه (EAR)</div>
+              <div id="heroEarAnnual" class="text-2xl sm:text-3xl font-black text-navy-900 mt-1 tabular-nums">—</div>
+              <div class="text-[11px] text-slate-500 mt-1">معادل مرکب ۱۲ ماهه IRR</div>
+            </div>
+
+            <div class="bg-white/95 rounded-xl p-3.5 border border-slate-200/80 shadow-xs">
+              <div class="text-xs font-medium text-slate-500">نرخ نزول / فرصت انتخابی</div>
+              <div id="heroMarketRate" class="text-2xl sm:text-3xl font-black text-slate-700 mt-1 tabular-nums">—</div>
+              <div id="heroSpreadLabel" class="text-[11px] font-semibold mt-1">—</div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center gap-2 text-xs text-slate-600 bg-white/70 rounded-xl px-3.5 py-2.5 border border-slate-200/70">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-teal-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span id="nominalFeeReminder">توجه: کارمزد اسمی ۴٪ سالانه معیار واقعی نیست؛ بلوکه شدن سپرده باعث می‌شود نرخ واقعی (IRR) بسیار بالاتر از ۴٪ سالانه باشد.</span>
+          </div>
+        </section>
+
+        <!-- ۲. پنل تفکیک دو تسهیلات بانک مهر ایران (نمایش در حالت‌های دو تسهیلاتی) -->
+        <section id="dualFacilitySection" class="bg-white rounded-2xl border border-teal-200/80 shadow-sm overflow-hidden">
+          <div class="bg-gradient-to-l from-teal-900 to-navy-900 text-white px-5 py-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </span>
+              <div>
+                <h3 class="text-sm sm:text-base font-extrabold">تفکیک دو تسهیلات ثبت‌شده در حساب بانک مهر ایران</h3>
+                <p id="dualFacilitySubtitle" class="text-[11px] text-slate-300">بانک کل وام را به دو پرونده مجزا تقسیم می‌کند</p>
+              </div>
+            </div>
+            <span id="dualModeBadge" class="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white/10 text-emerald-200 border border-white/15 self-start sm:self-auto">
+              مطابق دفترچه اقساط
+            </span>
+          </div>
+
+          <div class="p-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- کارت تسهیلات ۱: معادل سپرده (کارمزد ۰٪) -->
+              <div class="rounded-xl border border-slate-200 bg-slate-50/70 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/80">
+                    <div>
+                      <span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 mb-1">تسهیلات ۱</span>
+                      <h4 class="text-sm font-extrabold text-slate-900">بخش معادل سپرده (کارمزد ۰٪)</h4>
+                    </div>
+                    <div class="text-left">
+                      <div id="f1PrincipalVal" class="text-base font-black text-teal-800 tabular-nums">—</div>
+                      <div id="f1PrincipalToman" class="text-[10px] text-slate-500 tabular-nums">—</div>
+                    </div>
+                  </div>
+                  <ul id="f1BreakdownList" class="space-y-2 text-xs sm:text-sm text-slate-700">
+                    <!-- با جاوااسکریپت پر می‌شود -->
+                  </ul>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs">
+                  <span class="text-slate-500 font-medium">جمع بازپرداخت (کارمزد ۰ تومان):</span>
+                  <span id="f1TotalPaid" class="font-extrabold text-slate-900 tabular-nums">—</span>
+                </div>
+              </div>
+
+              <!-- کارت تسهیلات ۲: مازاد بر سپرده (کارمزددار) -->
+              <div class="rounded-xl border border-amber-200/80 bg-amber-50/40 p-4 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-amber-200/70">
+                    <div>
+                      <span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 mb-1">تسهیلات ۲</span>
+                      <h4 class="text-sm font-extrabold text-slate-900">بخش مازاد بر سپرده (کارمزددار)</h4>
+                    </div>
+                    <div class="text-left">
+                      <div id="f2PrincipalVal" class="text-base font-black text-amber-800 tabular-nums">—</div>
+                      <div id="f2PrincipalToman" class="text-[10px] text-slate-500 tabular-nums">—</div>
+                    </div>
+                  </div>
+                  <ul id="f2BreakdownList" class="space-y-2 text-xs sm:text-sm text-slate-700">
+                    <!-- با جاوااسکریپت پر می‌شود -->
+                  </ul>
+                </div>
+                <div class="mt-4 pt-3 border-t border-amber-200/70 space-y-1 text-xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-600 font-medium">جمع بازپرداخت تسهیلات ۲:</span>
+                    <span id="f2TotalPaid" class="font-extrabold text-slate-900 tabular-nums">—</span>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-600 font-medium">مجموع کارمزد تسهیلات ۲:</span>
+                    <span id="f2TotalFee" class="font-extrabold text-amber-700 tabular-nums">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- توضیح قابل باز و بسته شدن درباره تفاوت روش ۱ و ۲ در ماه‌های ۱۳ و ۲۵ -->
+            <details class="mt-4 rounded-xl bg-slate-50 border border-slate-200/80 px-3.5 py-2.5 text-xs text-slate-600">
+              <summary class="font-bold text-slate-700 cursor-pointer select-none flex items-center justify-between">
+                <span>تفاوت روش «دفترچه اقساط» با روش «کارمزد سالانه در ماه‌های ۱، ۱۳، ۲۵» چیست؟</span>
+                <span class="text-[11px] font-medium text-teal-700">مشاهده توضیح</span>
+              </summary>
+              <div class="mt-2.5 pt-2.5 border-t border-slate-200/70 leading-relaxed space-y-1.5">
+                <p>• در <strong>روش اول (دفترچه اقساط — پیش‌فرض)</strong>، در تسهیلات مازاد (مثلاً ۷۰ میلیون و ۳۰ ماه)، قسط ماه اول برابر کارمزد سال اول (<span class="font-semibold tabular-nums">۲٬۸۰۰٬۰۰۰ تومان</span>) بوده و ۲۸ قسط میانی دقیقاً یکسان (<span class="font-semibold tabular-nums">۲٬۵۹۳٬۰۰۰ تومان</span>) و قسط آخر (<span class="font-semibold tabular-nums">۲٬۵۸۲٬۰۰۰ تومان</span>) درج می‌شود که دقیقاً با اعداد سامانه بانک همخوانی دارد.</p>
+                <p>• در <strong>روش دوم (کارمزد سالانه روی مانده در ماه‌های ۱، ۱۳، ۲۵...)</strong>، کارمزد سال‌های دوم و سوم در سررسید سالگرد (ماه ۱۳ و ماه ۲۵) بر اساس مانده اصل بدهی محاسبه و جداگانه دریافت می‌شود و در ۲۷ ماه دیگر صرفاً اصل تسهیلات پرداخت می‌گردد. هر دو حالت را می‌توانید با یک کلیک مقایسه کنید.</p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        <!-- ۳. کارت‌های شاخص کلیدی (KPI Grid) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <!-- کارت ۱: نقدینگی واقعی اولیه -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">نقدینگی واقعی اولیه</span>
+              <span class="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </span>
+            </div>
+            <div id="kpiNetLiquidity" class="text-xl font-extrabold text-teal-800 mt-2 tabular-nums">—</div>
+            <div id="kpiNetLiquidityToman" class="text-[11px] font-medium text-slate-500 mt-0.5 tabular-nums">—</div>
+            <div class="text-[11px] text-slate-400 mt-1">مبلغ کل وام منهای سپرده بلوکه</div>
+          </div>
+
+          <!-- کارت ۲: قسط اول، اقساط میانی و قسط آخر -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">جمع قسط ماهانه (هر دو تسهیلات)</span>
+              <span class="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </span>
+            </div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-slate-500">قسط اول:</span>
+                <span id="kpiFirstInst" class="font-extrabold text-slate-900 tabular-nums">—</span>
+              </div>
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-slate-500">قسط میانی:</span>
+                <span id="kpiMidInst" class="font-bold text-teal-700 tabular-nums">—</span>
+              </div>
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-slate-500">قسط آخر:</span>
+                <span id="kpiLastInst" class="font-bold text-slate-700 tabular-nums">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- کارت ۳: مجموع اقساط و مجموع کارمزد واقعی -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-semibold text-slate-500">مجموع بازپرداخت و کارمزد</span>
+              <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+                </svg>
+              </span>
+            </div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-slate-500">مجموع کل اقساط:</span>
+                <span id="kpiTotalPayments" class="text-sm font-extrabold text-slate-900 tabular-nums">—</span>
+              </div>
+              <div class="flex items-baseline justify-between gap-2">
+                <span class="text-slate-500">مجموع کارمزد واقعی:</span>
+                <span id="kpiTotalFees" class="text-sm font-extrabold text-amber-700 tabular-nums">—</span>
+              </div>
+              <div id="kpiTotalFeesToman" class="text-[11px] text-slate-400 text-left tabular-nums">—</div>
+            </div>
+          </div>
+
+          <!-- کارت ۴: ارزش امروز سپرده برگشتی و افت ارزش -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">ارزش امروز سپرده برگشتی</span>
+              <span class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                </svg>
+              </span>
+            </div>
+            <div id="kpiPvDeposit" class="text-xl font-extrabold text-slate-900 mt-2 tabular-nums">—</div>
+            <div class="mt-1.5 flex flex-wrap items-center justify-between gap-1 text-[11px]">
+              <span class="text-slate-500">افت ارزش سپرده:</span>
+              <span id="kpiDepositLoss" class="font-bold text-rose-600 tabular-nums">—</span>
+            </div>
+          </div>
+
+          <!-- کارت ۵: ارزش امروز مجموع اقساط (PV Payments) -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">ارزش امروز مجموع اقساط (PV)</span>
+              <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+            </div>
+            <div id="kpiPvPayments" class="text-xl font-extrabold text-indigo-900 mt-2 tabular-nums">—</div>
+            <div id="kpiPvPaymentsSub" class="text-[11px] text-slate-500 mt-1">تنزیل‌شده با نرخ نزول انتخابی</div>
+          </div>
+
+          <!-- کارت ۶: ارزش خالص هزینه (یا سود صرفه‌جویی) در نرخ نزول انتخابی -->
+          <div id="kpiNetPvCard" class="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">ارزش خالص هزینه (Net PV Cost)</span>
+              <span id="kpiNetPvIconWrap" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </span>
+            </div>
+            <div id="kpiNetPvCost" class="text-xl font-extrabold mt-2 tabular-nums">—</div>
+            <div id="kpiNetPvMeaning" class="text-[11px] font-semibold mt-1 leading-snug">—</div>
+          </div>
+        </section>
+
+        <!-- ۴. بخش نمودارهای تعاملی -->
+        <section class="grid grid-cols-1 gap-6">
+          <!-- نمودار ۱: جریان نقدی ماهانه (اسمی در برابر ارزش فعلی) -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900">نمودار جریان نقدی ماهانه (اسمی در برابر ارزش فعلی PV)</h3>
+                <p class="text-xs text-slate-500 mt-0.5">مقایسه مقادیر اسمی دریافتی و پرداختی با ارزش واقعی امروز آن‌ها در نرخ نزول انتخابی</p>
+              </div>
+              <div class="inline-flex rounded-xl bg-slate-100 p-1 self-start sm:self-auto">
+                <button id="btnCashflowInst" type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer">
+                  فقط اقساط
+                </button>
+                <button id="btnCashflowFull" type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer">
+                  جریان کامل (با سپرده و وام)
+                </button>
+              </div>
+            </div>
+            <div class="relative w-full h-72 sm:h-80">
+              <canvas id="cashflowChart"></canvas>
+            </div>
+          </div>
+
+          <!-- نمودار ۲: منحنی تحلیل حساسیت Net PV Cost بر حسب نرخ نزول ماهانه -->
+          <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-900">منحنی تحلیل حساسیت ارزش خالص هزینه (Net PV Cost)</h3>
+                <p class="text-xs text-slate-500 mt-0.5">ارزش خالص هزینه بر حسب نرخ نزول ماهانه (منفی = سود صرفه‌جویی اقتصادی، مثبت = زیان/هزینه خالص)</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3 text-[11px] font-semibold">
+                <span class="inline-flex items-center gap-1.5 text-teal-700">
+                  <span class="w-2.5 h-2.5 rounded-full bg-teal-600"></span>
+                  نقطه سربه‌سر (IRR)
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-amber-700">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  نرخ نزول انتخابی
+                </span>
+              </div>
+            </div>
+            <div class="relative w-full h-72 sm:h-80">
+              <canvas id="sensitivityChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- ۵. جدول کامل اقساط ماهانه -->
+        <section class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+          <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div>
+              <h3 class="text-sm sm:text-base font-bold text-slate-900">جدول کامل اقساط ماهانه</h3>
+              <p id="tableSummarySubtitle" class="text-xs text-slate-500 mt-0.5">مطابق دفترچه اقساط با دقت هزار تومان</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- سوییچ واحد نمایش جدول -->
+              <div class="inline-flex rounded-xl bg-slate-100 p-1">
+                <button id="btnUnitMillion" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer">
+                  میلیون تومان
+                </button>
+                <button id="btnUnitToman" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer">
+                  تومان دقیق
+                </button>
+              </div>
+
+              <button id="btnExportCsvTable" type="button" class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 transition-colors cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>دانلود CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto max-h-[480px] overflow-y-auto">
+            <table class="w-full text-right border-collapse min-w-[700px]">
+              <thead id="scheduleTableHead" class="bg-slate-100 text-slate-700 text-xs font-bold sticky top-0 z-10 shadow-xs">
+                <!-- سرستون‌ها بسته به حالت دو تسهیلاتی یا تک تسهیلاتی به‌روزرسانی می‌شوند -->
+              </thead>
+              <tbody id="scheduleTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm text-slate-700 tabular-nums">
+                <!-- ردیف‌ها با DocumentFragment رندر می‌شوند -->
+              </tbody>
+              <tfoot id="scheduleTableFoot" class="bg-navy-900 text-white text-xs sm:text-sm font-bold sticky bottom-0 z-10 tabular-nums">
+                <!-- ردیف جمع کل -->
+              </tfoot>
+            </table>
+          </div>
+        </section>
+
+        <!-- پاورقی شفافیت فرمول‌ها -->
+        <footer class="bg-white/80 rounded-2xl border border-slate-200/70 p-4 text-xs text-slate-600 leading-relaxed space-y-1.5">
+          <div class="font-bold text-slate-800">راهنمای فرمول‌های اقتصادی:</div>
+          <p>• <strong>ارزش امروز سپرده برگشتی (PV Deposit):</strong> سپرده تا پایان آخرین قسط (<span class="font-semibold">N + روزهای انتظار ÷ ۳۰</span>) بلوکه بوده و با نرخ مرکب نزول ماهانه تنزیل می‌شود.</p>
+          <p>• <strong>ارزش خالص هزینه (Net PV Cost):</strong> برابر با <span dir="ltr" class="inline-block font-mono text-[11px] bg-slate-100 px-1.5 py-0.5 rounded">PV(Payments) + Deposit - PV(Loan) - PV(Deposit)</span> است. مقدار منفی یعنی وام از نزول بازار ارزان‌تر بوده و صرفه‌جویی اقتصادی دارد؛ مقدار مثبت یعنی وام گران‌تر از نرخ فرصت انتخابی شماست.</p>
+          <p>• <strong>نرخ واقعی تأمین مالی (IRR):</strong> نرخ ماهانه‌ای است که ارزش خالص فعلی تمام جریان‌های نقدی (سپرده روز صفر، وام در پایان انتظار، تمام اقساط و آزادسازی سپرده در پایان قسط آخر) را دقیقاً برابر صفر می‌کند.</p>
+        </footer>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- پیام Toast جایگزین alert -->
+  <div id="toastContainer" class="fixed bottom-5 left-5 z-50 pointer-events-none transition-all duration-300 opacity-0 translate-y-3">
+    <div class="flex items-center gap-2.5 bg-navy-900 text-white text-xs sm:text-sm font-medium px-4 py-3 rounded-xl shadow-lg border border-slate-700">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span id="toastMessage">عملیات با موفقیت انجام شد.</span>
+    </div>
+  </div>
+
+  <!-- منطق کامل برنامه: FinancialEngine, ChartManager, UIController -->
+  <script>
+    'use strict';
+
+    /**
+     * سناریوهای پیش‌فرض و آماده
+     */
+    const PRESETS = Object.freeze({
+      real: {
+        deposit: 80,
+        loan: 150,
+        months: 30,
+        waitingDays: 15,
+        annualFee: 4,
+        monthlyMarketRate: 8,
+        repaymentMethod: 'nasr_dual_exact',
+        discountLoanForWaiting: true
+      },
+      sample200: {
+        deposit: 110,
+        loan: 200,
+        months: 36,
+        waitingDays: 15,
+        annualFee: 4,
+        monthlyMarketRate: 8,
+        repaymentMethod: 'nasr_dual_exact',
+        discountLoanForWaiting: true
+      }
+    });
+
+    /**
+     * توابع دقیق رُند کردن به هزار تومان (0.001 میلیون تومان) با ایمنی خطای ممیز شناور
+     */
+    const ceilToThousand = (m) => Math.ceil(m * 1000 - 1e-9) / 1000;
+    const roundToThousand = (m) => Math.round(m * 1000) / 1000;
+
+    /**
+     * ابزارهای قالب‌بندی اعداد فارسی و تبدیل ارقام فارسی/عربی به انگلیسی
+     */
+    const Formatters = {
+      faInt: new Intl.NumberFormat('fa-IR', { maximumFractionDigits: 0 }),
+      faDec2: new Intl.NumberFormat('fa-IR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }),
+      faFixed2: new Intl.NumberFormat('fa-IR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      faFixed3: new Intl.NumberFormat('fa-IR', { minimumFractionDigits: 3, maximumFractionDigits: 3 }),
+
+      normalizeNumericString(str) {
+        if (typeof str !== 'string') return String(str ?? '');
+        const persian = '۰۱۲۳۴۵۶۷۸۹';
+        const arabic = '٠١٢٣٤٥٦٧٨٩';
+        return str
+          .replace(/[۰-۹]/g, (d) => String(persian.indexOf(d)))
+          .replace(/[٠-٩]/g, (d) => String(arabic.indexOf(d)))
+          .replace(/[٫،/]/g, '.')
+          .replace(/[^0-9.\-]/g, '');
+      },
+
+      /** قالب‌بندی میلیون تومان (۲ یا ۳ رقم اعشار) */
+      formatMillion(value, fixed3 = false, showSign = false) {
+        if (!Number.isFinite(value)) return '—';
+        const absVal = Math.abs(value);
+        const formatted = fixed3 ? this.faFixed3.format(absVal) : this.faDec2.format(absVal);
+        const sign = value < -1e-9 ? '−' : (showSign && value > 1e-9 ? '+' : '');
+        return `${sign}${formatted} م.ت`;
+      },
+
+      /** قالب‌بندی عدد خالص (بدون واحد) */
+      formatPlainMillion(value, fixed3 = true) {
+        if (!Number.isFinite(value)) return '—';
+        const absVal = Math.abs(value);
+        const formatted = fixed3 ? this.faFixed3.format(absVal) : this.faDec2.format(absVal);
+        const sign = value < -1e-9 ? '−' : '';
+        return `${sign}${formatted}`;
+      },
+
+      /** قالب‌بندی تومان دقیق (ضرب در ۱,۰۰۰,۰۰۰ و رُند به عدد صحیح) */
+      formatToman(millionValue, withUnit = true, showSign = false) {
+        if (!Number.isFinite(millionValue)) return '—';
+        const tomans = Math.round(Math.abs(millionValue) * 1_000_000);
+        const sign = millionValue < -1e-9 ? '−' : (showSign && millionValue > 1e-9 ? '+' : '');
+        return `${sign}${this.faInt.format(tomans)}${withUnit ? ' تومان' : ''}`;
+      },
+
+      /** قالب‌بندی درصد با ۲ رقم اعشار */
+      formatPercent(valuePercent, showSign = false) {
+        if (!Number.isFinite(valuePercent)) return 'نامشخص';
+        const absStr = this.faFixed2.format(Math.abs(valuePercent));
+        const sign = valuePercent < -1e-9 ? '−' : (showSign && valuePercent > 1e-9 ? '+' : '');
+        return `${sign}${absStr}٪`;
+      }
+    };
+
+    /**
+     * =========================================================================
+     * ماژول ۱: موتور محاسبات مالی (FinancialEngine)
+     * پیاده‌سازی دقیق ۴ روش اقساط (شامل ساختار دو تسهیلاتی واقعی بانک مهر)،
+     * محاسبات ارزش زمانی پول و حلگر ترکیبی Bisection + Newton-Raphson برای IRR
+     * =========================================================================
+     */
+    const FinancialEngine = {
+      /**
+       * تولید جدول اقساط بر اساس روش انتخابی
+       */
+      buildSchedule(params) {
+        const { deposit, loan, months: N, waitingDays, annualFee, monthlyMarketRate, repaymentMethod } = params;
+        const w = waitingDays / 30;
+        const rMarket = monthlyMarketRate / 100;
+        const isDual = repaymentMethod === 'nasr_dual_exact' || repaymentMethod === 'nasr_dual_anniversary';
+
+        const schedule = [];
+        let dualSummary = null;
+
+        if (isDual) {
+          // ----------------- تسهیلات ۱: معادل سپرده (کارمزد ۰٪) -----------------
+          const f1Principal = Math.min(deposit, loan);
+          const f1Base = f1Principal > 0 ? ceilToThousand(f1Principal / N) : 0;
+          let f1Rem = f1Principal;
+          const f1Insts = [];
+          const f1Opening = [];
+
+          for (let i = 1; i <= N; i++) {
+            f1Opening.push(f1Rem);
+            let inst = 0;
+            if (f1Principal > 0) {
+              if (i === N) {
+                inst = Math.max(0, roundToThousand(f1Rem));
+              } else {
+                inst = Math.min(f1Rem, f1Base);
+              }
+            }
+            inst = roundToThousand(inst);
+            f1Rem = Math.max(0, roundToThousand(f1Rem - inst));
+            f1Insts.push(inst);
+          }
+
+          // ----------------- تسهیلات ۲: مازاد بر سپرده (کارمزددار) -----------------
+          const f2Principal = Math.max(0, roundToThousand(loan - deposit));
+          const years = Math.ceil(N / 12);
+          const principalMonths = Math.max(1, N - years);
+          const f2Insts = [];
+          const f2Tags = [];
+          const f2Opening = [];
+          const f2PrincipalParts = [];
+          const f2FeeParts = [];
+          const f2AnnualFeeItems = [];
+
+          if (repaymentMethod === 'nasr_dual_exact') {
+            // حالت ۱: دقیقاً مطابق دفترچه اقساط بانک
+            const f2FirstInst = f2Principal > 0 ? roundToThousand(f2Principal * (annualFee / 100)) : 0;
+            const f2RegularInst = f2Principal > 0 ? ceilToThousand(f2Principal / principalMonths) : 0;
+            const f2LastInst = f2Principal > 0
+              ? Math.max(0, roundToThousand(f2Principal - (principalMonths - 1) * f2RegularInst))
+              : 0;
+
+            // ساخت مبالغ اقساط تسهیلات ۲
+            for (let i = 1; i <= N; i++) {
+              if (f2Principal <= 0) {
+                f2Insts.push(0);
+                f2Tags.push('');
+              } else if (N === 1) {
+                f2Insts.push(roundToThousand(f2Principal + f2FirstInst));
+                f2Tags.push('اصل + کارمزد');
+              } else if (i === 1) {
+                f2Insts.push(f2FirstInst);
+                f2Tags.push('کارمزد سال اول');
+              } else if (i === N) {
+                f2Insts.push(f2LastInst);
+                f2Tags.push('قسط پایانی');
+              } else {
+                f2Insts.push(f2RegularInst);
+                f2Tags.push('');
+              }
+            }
+
+            // استهلاک هموار مانده اصل تسهیلات ۲ تا صفر در ماه N
+            const sumF2Months2ToN = f2Insts.slice(1).reduce((acc, v) => acc + v, 0);
+            let f2Rem = f2Principal;
+            for (let i = 1; i <= N; i++) {
+              f2Opening.push(f2Rem);
+              let pPart = 0;
+              let feePart = 0;
+              if (f2Principal > 0) {
+                if (N === 1) {
+                  pPart = f2Principal;
+                  feePart = f2FirstInst;
+                } else if (i === 1) {
+                  pPart = 0;
+                  feePart = f2Insts[0];
+                } else if (i === N) {
+                  pPart = f2Rem;
+                  feePart = Math.max(0, f2Insts[i - 1] - pPart);
+                } else {
+                  pPart = sumF2Months2ToN > 0
+                    ? Math.min(f2Rem, f2Principal * (f2Insts[i - 1] / sumF2Months2ToN))
+                    : 0;
+                  feePart = Math.max(0, f2Insts[i - 1] - pPart);
+                }
+              }
+              f2PrincipalParts.push(pPart);
+              f2FeeParts.push(feePart);
+              f2Rem = Math.max(0, f2Rem - pPart);
+            }
+
+            const f2TotalPaid = f2Insts.reduce((a, b) => a + b, 0);
+            dualSummary = {
+              mode: 'nasr_dual_exact',
+              f1: {
+                principal: f1Principal,
+                regularCount: Math.max(0, N - 1),
+                regularAmount: f1Base,
+                lastAmount: N >= 1 ? f1Insts[N - 1] : 0,
+                totalPaid: f1Insts.reduce((a, b) => a + b, 0),
+                totalFee: 0
+              },
+              f2: {
+                principal: f2Principal,
+                firstAmount: f2FirstInst,
+                regularCount: N >= 2 ? Math.max(0, N - 2) : 0,
+                regularAmount: f2RegularInst,
+                lastAmount: N >= 2 ? f2LastInst : (f2Principal + f2FirstInst),
+                totalPaid: f2TotalPaid,
+                totalFee: Math.max(0, f2TotalPaid - f2Principal),
+                annualFeeItems: f2Principal > 0 ? [{ month: 1, amount: f2FirstInst }] : []
+              }
+            };
+          } else {
+            // حالت ۲: کارمزد سالانه روی مانده در ماه‌های ۱، ۱۳، ۲۵...
+            const f2PrincipalInst = f2Principal > 0 ? ceilToThousand(f2Principal / principalMonths) : 0;
+            // تعیین آخرین ماه پرداخت اصل (بزرگ‌ترین ماه غیر سالگرد)
+            let lastPrincipalMonth = N;
+            if (N > 1) {
+              for (let m = N; m >= 1; m--) {
+                if ((m - 1) % 12 !== 0) {
+                  lastPrincipalMonth = m;
+                  break;
+                }
+              }
+            }
+
+            let f2Rem = f2Principal;
+            let regularPrincipalCount = 0;
+            let lastPrincipalPaid = 0;
+
+            for (let i = 1; i <= N; i++) {
+              f2Opening.push(f2Rem);
+              if (f2Principal <= 0) {
+                f2Insts.push(0);
+                f2PrincipalParts.push(0);
+                f2FeeParts.push(0);
+                f2Tags.push('');
+                continue;
+              }
+
+              if (N === 1) {
+                const fee = roundToThousand(f2Rem * (annualFee / 100));
+                f2Insts.push(roundToThousand(f2Rem + fee));
+                f2PrincipalParts.push(f2Rem);
+                f2FeeParts.push(fee);
+                f2Tags.push('کارمزد سالانه');
+                f2AnnualFeeItems.push({ month: 1, amount: fee });
+                f2Rem = 0;
+              } else if ((i - 1) % 12 === 0) {
+                // ماه‌های سالگرد: ۱، ۱۳، ۲۵...
+                const fee = roundToThousand(f2Rem * (annualFee / 100));
+                f2Insts.push(fee);
+                f2PrincipalParts.push(0);
+                f2FeeParts.push(fee);
+                f2Tags.push('کارمزد سالانه');
+                f2AnnualFeeItems.push({ month: i, amount: fee });
+              } else {
+                const pPaid = (i === lastPrincipalMonth)
+                  ? Math.max(0, roundToThousand(f2Rem))
+                  : Math.min(f2Rem, f2PrincipalInst);
+                const pRounded = roundToThousand(pPaid);
+                f2Insts.push(pRounded);
+                f2PrincipalParts.push(pRounded);
+                f2FeeParts.push(0);
+                if (i === lastPrincipalMonth) {
+                  f2Tags.push('قسط پایانی');
+                  lastPrincipalPaid = pRounded;
+                } else {
+                  f2Tags.push('');
+                  regularPrincipalCount++;
+                }
+                f2Rem = Math.max(0, roundToThousand(f2Rem - pRounded));
+              }
+            }
+
+            const f2TotalPaid = f2Insts.reduce((a, b) => a + b, 0);
+            dualSummary = {
+              mode: 'nasr_dual_anniversary',
+              f1: {
+                principal: f1Principal,
+                regularCount: Math.max(0, N - 1),
+                regularAmount: f1Base,
+                lastAmount: N >= 1 ? f1Insts[N - 1] : 0,
+                totalPaid: f1Insts.reduce((a, b) => a + b, 0),
+                totalFee: 0
+              },
+              f2: {
+                principal: f2Principal,
+                firstAmount: f2Insts[0] || 0,
+                regularCount: regularPrincipalCount,
+                regularAmount: f2PrincipalInst,
+                lastAmount: lastPrincipalPaid,
+                totalPaid: f2TotalPaid,
+                totalFee: Math.max(0, f2TotalPaid - f2Principal),
+                annualFeeItems: f2AnnualFeeItems
+              }
+            };
+          }
+
+          // ترکیب دو تسهیلات در ردیف‌های جدول ماهانه
+          for (let i = 1; i <= N; i++) {
+            const f1Inst = f1Insts[i - 1];
+            const f2Inst = f2Insts[i - 1];
+            const totalInst = roundToThousand(f1Inst + f2Inst);
+            const openingTotal = Math.max(0, f1Opening[i - 1] + f2Opening[i - 1]);
+            const closingTotal = Math.max(0, openingTotal - f1Inst - f2PrincipalParts[i - 1]);
+            const paymentTimeMonths = w + i;
+            const pvInstallment = totalInst / Math.pow(1 + rMarket, paymentTimeMonths);
+
+            schedule.push({
+              index: i,
+              paymentTimeMonths,
+              f1Inst,
+              f2Inst,
+              openingBalance: openingTotal,
+              closingBalance: closingTotal,
+              principalPart: f1Inst + f2PrincipalParts[i - 1],
+              feePart: f2FeeParts[i - 1],
+              installment: totalInst,
+              pvInstallment,
+              tag: f2Tags[i - 1]
+            });
+          }
+        } else {
+          // ----------------- حالت‌های تک تسهیلاتی: PMT و کاهشی -----------------
+          const monthlyRate = (annualFee / 100) / 12;
+          let rem = loan;
+
+          let fixedPmt = 0;
+          if (repaymentMethod === 'pmt') {
+            if (monthlyRate === 0) {
+              fixedPmt = loan / N;
+            } else {
+              const factor = Math.pow(1 + monthlyRate, N);
+              fixedPmt = loan * (monthlyRate * factor) / (factor - 1);
+            }
+          }
+          const equalPrincipal = loan / N;
+
+          for (let i = 1; i <= N; i++) {
+            const openingBalance = Math.max(0, rem);
+            let principalPart = 0;
+            let feePart = 0;
+            let installment = 0;
+
+            if (repaymentMethod === 'pmt') {
+              feePart = openingBalance * monthlyRate;
+              principalPart = (i === N) ? openingBalance : (fixedPmt - feePart);
+              installment = principalPart + feePart;
+            } else {
+              // کاهشی: اصل مساوی + کارمزد ماهانه روی مانده کل وام
+              principalPart = (i === N) ? openingBalance : equalPrincipal;
+              feePart = openingBalance * monthlyRate;
+              installment = principalPart + feePart;
+            }
+
+            rem = Math.max(0, openingBalance - principalPart);
+            const paymentTimeMonths = w + i;
+            const pvInstallment = installment / Math.pow(1 + rMarket, paymentTimeMonths);
+
+            schedule.push({
+              index: i,
+              paymentTimeMonths,
+              f1Inst: 0,
+              f2Inst: 0,
+              openingBalance,
+              closingBalance: rem,
+              principalPart,
+              feePart,
+              installment,
+              pvInstallment,
+              tag: ''
+            });
+          }
+        }
+
+        const totalInstallments = schedule.reduce((sum, r) => sum + r.installment, 0);
+        const totalFees = Math.max(0, totalInstallments - loan);
+        const pvPayments = schedule.reduce((sum, r) => sum + r.pvInstallment, 0);
+        const totalF1 = schedule.reduce((sum, r) => sum + r.f1Inst, 0);
+        const totalF2 = schedule.reduce((sum, r) => sum + r.f2Inst, 0);
+
+        return {
+          isDual,
+          dualSummary,
+          schedule,
+          totalF1,
+          totalF2,
+          totalInstallments,
+          totalFees,
+          pvPayments
+        };
+      },
+
+      /**
+       * محاسبه ارزش خالص فعلی جریان‌های نقدی وام‌گیرنده و مشتق آن نسبت به نرخ rate (اعشاری)
+       * CF:
+       *  t = 0      : -deposit
+       *  t = w      : +loan
+       *  t = w + i  : -installment[i]
+       *  t = w + N  : +deposit
+       */
+      evalNpvAndDerivative(rate, deposit, loan, w, schedule) {
+        if (rate <= -0.999999) return { f: Number.NaN, df: Number.NaN };
+        const base = 1 + rate;
+        const N = schedule.length;
+
+        const loanPow = Math.pow(base, w);
+        const depPow = Math.pow(base, w + N);
+
+        let f = -deposit + (loan / loanPow) + (deposit / depPow);
+        let df = -(w * loan) / (loanPow * base) - ((w + N) * deposit) / (depPow * base);
+
+        for (let i = 0; i < N; i++) {
+          const t = schedule[i].paymentTimeMonths;
+          const inst = schedule[i].installment;
+          const p = Math.pow(base, t);
+          f -= inst / p;
+          df += (t * inst) / (p * base);
+        }
+
+        return { f, df };
+      },
+
+      /**
+       * حلگر ترکیبی Bisection + Newton-Raphson روی بازه [-0.5, 5.0]
+       * با اسکن دقیق تغییر علامت برای یافتن نرخ واقعی تأمین مالی ماهانه بدون NaN
+       */
+      solveMonthlyIRR(deposit, loan, w, schedule) {
+        if (deposit >= loan || schedule.length === 0) {
+          return null;
+        }
+
+        const evalF = (r) => this.evalNpvAndDerivative(r, deposit, loan, w, schedule).f;
+
+        // ابتدا بررسی دقیق در بازه غیرمنفی [0, 5.0] برای عبور از منفی به مثبت (هزینه واقعی وام)
+        let lo = null;
+        let hi = null;
+
+        const fAt0 = evalF(0);
+        if (Math.abs(fAt0) < 1e-10) {
+          const fTiny = evalF(0.0005);
+          if (fTiny > 0) return 0;
+        }
+
+        const scanForCrossing = (start, end, step, requireRising) => {
+          let prevR = start;
+          let prevF = evalF(start);
+          for (let r = start + step; r <= end + 1e-12; r += step) {
+            const currF = evalF(r);
+            if (!Number.isFinite(currF) || !Number.isFinite(prevF)) {
+              prevR = r;
+              prevF = currF;
+              continue;
+            }
+            if (requireRising) {
+              if (prevF <= 0 && currF > 0) return [prevR, r];
+            } else {
+              if ((prevF <= 0 && currF >= 0) || (prevF >= 0 && currF <= 0)) return [prevR, r];
+            }
+            prevR = r;
+            prevF = currF;
+          }
+          return null;
+        };
+
+        // گام ۱: جستجوی اصلی روی [0, 1.0] با گام ریز 0.0005 و سپس [1.0, 5.0] با گام 0.005
+        let bracket = scanForCrossing(0, 1.0, 0.0005, true)
+          || scanForCrossing(1.0, 5.0, 0.005, true);
+
+        // گام ۲: اگر کارمزد صفر و نرخ منفی بود، بررسی [-0.5, 0]
+        if (!bracket) {
+          bracket = scanForCrossing(-0.5, 0, 0.002, false);
+        }
+
+        if (!bracket) {
+          return null;
+        }
+
+        [lo, hi] = bracket;
+        let fLo = evalF(lo);
+        let x = 0.5 * (lo + hi);
+
+        // پالایش ریشه با الگوریتم ترکیبی Newton-Raphson و Bisection
+        for (let iter = 0; iter < 100; iter++) {
+          const { f, df } = this.evalNpvAndDerivative(x, deposit, loan, w, schedule);
+          if (!Number.isFinite(f)) {
+            x = 0.5 * (lo + hi);
+            continue;
+          }
+          if (Math.abs(f) < 1e-12 || Math.abs(hi - lo) < 1e-12) {
+            return x;
+          }
+
+          // به‌روزرسانی بازه محصورکننده
+          if ((fLo <= 0 && f <= 0) || (fLo >= 0 && f >= 0)) {
+            lo = x;
+            fLo = f;
+          } else {
+            hi = x;
+          }
+
+          // تلاش برای گام Newton-Raphson در صورت قرارگیری امن داخل بازه (lo, hi)
+          let nextX = 0.5 * (lo + hi);
+          if (Number.isFinite(df) && Math.abs(df) > 1e-14) {
+            const newtonCandidate = x - f / df;
+            if (newtonCandidate > lo && newtonCandidate < hi) {
+              nextX = newtonCandidate;
+            }
+          }
+          x = nextX;
+        }
+
+        return 0.5 * (lo + hi);
+      },
+
+      /**
+       * محاسبه Net PV Cost در یک نرخ ماهانه دلخواه (اعشاری)
+       */
+      computeNetPvCostAtRate(rateDec, params, schedule) {
+        const w = params.waitingDays / 30;
+        const N = schedule.length;
+        const base = 1 + rateDec;
+
+        let pvPay = 0;
+        for (let i = 0; i < N; i++) {
+          pvPay += schedule[i].installment / Math.pow(base, schedule[i].paymentTimeMonths);
+        }
+        const pvDep = params.deposit / Math.pow(base, N + w);
+        const pvLoan = params.discountLoanForWaiting
+          ? (params.loan / Math.pow(base, w))
+          : params.loan;
+
+        return pvPay + params.deposit - pvLoan - pvDep;
+      },
+
+      /**
+       * اجرای کامل تمام محاسبات اقتصادی و داده‌های نمودارها
+       */
+      calculateAll(params) {
+        const w = params.waitingDays / 30;
+        const rMarket = params.monthlyMarketRate / 100;
+        const built = this.buildSchedule(params);
+        const { schedule } = built;
+
+        // ۱. نقدینگی واقعی اولیه
+        const netInitialLiquidity = params.loan - params.deposit;
+
+        // ۲. ارزش امروز سپرده برگشتی و افت ارزش
+        const pvDeposit = params.deposit / Math.pow(1 + rMarket, params.months + w);
+        const depositLoss = params.deposit - pvDeposit;
+        const depositLossPercent = params.deposit > 0 ? (depositLoss / params.deposit) * 100 : 0;
+
+        // ۳. ارزش فعلی وام و ارزش خالص هزینه (Net PV Cost)
+        const pvLoan = params.discountLoanForWaiting
+          ? (params.loan / Math.pow(1 + rMarket, w))
+          : params.loan;
+        const netPvCost = built.pvPayments + params.deposit - pvLoan - pvDeposit;
+
+        // ۴. نرخ واقعی تأمین مالی ماهانه (IRR) و نرخ مؤثر سالانه (EAR)
+        const monthlyIrrDecimal = this.solveMonthlyIRR(params.deposit, params.loan, w, schedule);
+        const monthlyIrrPercent = monthlyIrrDecimal !== null ? monthlyIrrDecimal * 100 : null;
+        const effectiveAnnualRatePercent = monthlyIrrDecimal !== null
+          ? (Math.pow(1 + monthlyIrrDecimal, 12) - 1) * 100
+          : null;
+
+        // ۵. قسط اول، قسط میانی نمونه و قسط آخر
+        const firstInstallment = schedule.length > 0 ? schedule[0].installment : 0;
+        const lastInstallment = schedule.length > 0 ? schedule[schedule.length - 1].installment : 0;
+        const midInstallment = schedule.length > 2
+          ? schedule[1].installment
+          : (schedule.length > 0 ? schedule[0].installment : 0);
+
+        // ۶. داده‌های منحنی تحلیل حساسیت (Net PV Cost از ۰٪ تا ۱۵٪ یا بیشتر در صورت انتخاب نرخ بالاتر)
+        const maxSensitivityPercent = Math.max(15, Math.ceil(params.monthlyMarketRate + 2));
+        const sensitivityPoints = [];
+        for (let pct = 0; pct <= maxSensitivityPercent + 1e-9; pct += 0.25) {
+          const r = pct / 100;
+          sensitivityPoints.push({
+            ratePercent: Number(pct.toFixed(2)),
+            netPvCost: this.computeNetPvCostAtRate(r, params, schedule)
+          });
+        }
+
+        return {
+          ...built,
+          params,
+          waitingMonths: w,
+          netInitialLiquidity,
+          firstInstallment,
+          midInstallment,
+          lastInstallment,
+          pvDeposit,
+          depositLoss,
+          depositLossPercent,
+          pvLoan,
+          netPvCost,
+          monthlyIrrDecimal,
+          monthlyIrrPercent,
+          effectiveAnnualRatePercent,
+          sensitivityPoints,
+          maxSensitivityPercent
+        };
+      }
+    };
+
+    /**
+     * =========================================================================
+     * ماژول ۲: مدیریت نمودارهای تعاملی (ChartManager)
+     * به‌روزرسانی نرم بدون چشمک‌زدن (animation: false + update('none'))
+     * =========================================================================
+     */
+    const ChartManager = {
+      cashflowChart: null,
+      sensitivityChart: null,
+      cashflowMode: 'installments', // 'installments' | 'full'
+      lastResult: null,
+
+      /** پلاگین رسم خطوط مرجع IRR و نرخ نزول انتخابی روی منحنی Net PV Cost */
+      referenceLinesPlugin: {
+        id: 'referenceLinesPlugin',
+        afterDatasetsDraw(chart) {
+          const meta = chart.options.plugins.referenceLinesData;
+          if (!meta) return;
+
+          const { ctx, chartArea, scales } = chart;
+          const xScale = scales.x;
+          const yScale = scales.y;
+          if (!xScale || !yScale) return;
+
+          ctx.save();
+
+          // خط افقی صفر (نقطه سربه‌سر)
+          const yZero = yScale.getPixelForValue(0);
+          if (yZero >= chartArea.top && yZero <= chartArea.bottom) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(15, 23, 42, 0.35)';
+            ctx.lineWidth = 1.25;
+            ctx.setLineDash([4, 4]);
+            ctx.moveTo(chartArea.left, yZero);
+            ctx.lineTo(chartArea.right, yZero);
+            ctx.stroke();
+          }
+
+          const drawVerticalMarker = (xValue, yValue, color, labelText, offsetY) => {
+            if (xValue === null || !Number.isFinite(xValue)) return;
+            if (xValue < xScale.min || xValue > xScale.max) return;
+
+            const xPx = xScale.getPixelForValue(xValue);
+            const yPx = yScale.getPixelForValue(yValue);
+
+            ctx.beginPath();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.75;
+            ctx.setLineDash([5, 4]);
+            ctx.moveTo(xPx, chartArea.top);
+            ctx.lineTo(xPx, chartArea.bottom);
+            ctx.stroke();
+
+            // نقطه تقاطع روی منحنی
+            ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.arc(xPx, Math.min(Math.max(yPx, chartArea.top + 4), chartArea.bottom - 4), 5.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // برچسب متنی بالا
+            ctx.font = '700 11px Vazirmatn, sans-serif';
+            const textW = ctx.measureText(labelText).width;
+            const boxW = textW + 14;
+            const boxH = 22;
+            let boxX = xPx - boxW / 2;
+            if (boxX < chartArea.left + 4) boxX = chartArea.left + 4;
+            if (boxX + boxW > chartArea.right - 4) boxX = chartArea.right - boxW - 4;
+            const boxY = chartArea.top + offsetY;
+
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            if (typeof ctx.roundRect === 'function') {
+              ctx.roundRect(boxX, boxY, boxW, boxH, 6);
+            } else {
+              ctx.rect(boxX, boxY, boxW, boxH);
+            }
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(labelText, boxX + boxW / 2, boxY + boxH / 2 + 0.5);
+          };
+
+          drawVerticalMarker(
+            meta.marketRatePercent,
+            meta.netPvAtMarket,
+            '#d97706',
+            `نزول: ${Formatters.formatPercent(meta.marketRatePercent)}`,
+            6
+          );
+
+          if (meta.irrPercent !== null && meta.irrPercent >= xScale.min && meta.irrPercent <= xScale.max) {
+            const tooClose = Math.abs(meta.irrPercent - meta.marketRatePercent) < (xScale.max - xScale.min) * 0.18;
+            drawVerticalMarker(
+              meta.irrPercent,
+              meta.netPvAtIrr,
+              '#0f766e',
+              `IRR: ${Formatters.formatPercent(meta.irrPercent)}`,
+              tooClose ? 32 : 6
+            );
+          }
+
+          ctx.restore();
+        }
+      },
+
+      init() {
+        try {
+          if (typeof Chart === 'undefined') return;
+          Chart.defaults.font.family = "'Vazirmatn', system-ui, sans-serif";
+          Chart.defaults.color = '#475569';
+
+          const ctx1 = document.getElementById('cashflowChart').getContext('2d');
+          this.cashflowChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+              labels: [],
+              datasets: [
+                {
+                  type: 'bar',
+                  label: 'مبلغ اسمی قسط (م.ت)',
+                  data: [],
+                  backgroundColor: [],
+                  borderRadius: 5,
+                  maxBarThickness: 28,
+                  order: 2
+                },
+                {
+                  type: 'line',
+                  label: 'ارزش فعلی امروز PV (م.ت)',
+                  data: [],
+                  borderColor: '#4f46e5',
+                  backgroundColor: '#4f46e5',
+                  borderWidth: 2.25,
+                  pointRadius: 2.5,
+                  pointHoverRadius: 5,
+                  tension: 0.2,
+                  order: 1
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: false,
+              interaction: { mode: 'index', intersect: false },
+              plugins: {
+                legend: {
+                  position: 'top',
+                  rtl: true,
+                  labels: { usePointStyle: true, boxWidth: 8, font: { size: 11, weight: '600' } }
+                },
+                tooltip: {
+                  rtl: true,
+                  textDirection: 'rtl',
+                  backgroundColor: '#0f172a',
+                  padding: 10,
+                  cornerRadius: 10,
+                  callbacks: {
+                    label: (ctx) => `${ctx.dataset.label}: ${Formatters.formatMillion(ctx.parsed.y, true, this.cashflowMode === 'full')}`
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false },
+                  ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 15, font: { size: 10 } }
+                },
+                y: {
+                  grid: { color: 'rgba(148, 163, 184, 0.2)' },
+                  ticks: {
+                    font: { size: 11 },
+                    callback: (v) => Formatters.formatPlainMillion(v, false)
+                  }
+                }
+              }
+            }
+          });
+
+          const ctx2 = document.getElementById('sensitivityChart').getContext('2d');
+          this.sensitivityChart = new Chart(ctx2, {
+            type: 'line',
+            plugins: [this.referenceLinesPlugin],
+            data: {
+              datasets: [
+                {
+                  label: 'ارزش خالص هزینه (Net PV Cost)',
+                  data: [],
+                  borderColor: '#0f766e',
+                  borderWidth: 2.5,
+                  pointRadius: 0,
+                  pointHoverRadius: 5,
+                  pointHoverBackgroundColor: '#0f766e',
+                  tension: 0.25,
+                  fill: {
+                    target: 'origin',
+                    above: 'rgba(225, 29, 72, 0.13)',   // مثبت = هزینه / زیان
+                    below: 'rgba(16, 185, 129, 0.16)'   // منفی = سود صرفه‌جویی
+                  }
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: false,
+              interaction: { mode: 'nearest', axis: 'x', intersect: false },
+              plugins: {
+                legend: { display: false },
+                referenceLinesData: null,
+                tooltip: {
+                  rtl: true,
+                  textDirection: 'rtl',
+                  backgroundColor: '#0f172a',
+                  padding: 10,
+                  cornerRadius: 10,
+                  callbacks: {
+                    title: (items) => items.length ? `نرخ نزول ماهانه: ${Formatters.formatPercent(items[0].parsed.x)}` : '',
+                    label: (ctx) => {
+                      const val = ctx.parsed.y;
+                      const label = val < 0 ? 'سود صرفه‌جویی (Net PV منفی)' : 'هزینه/زیان خالص (Net PV مثبت)';
+                      return `${label}: ${Formatters.formatMillion(val, false, true)}`;
+                    }
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  type: 'linear',
+                  min: 0,
+                  max: 15,
+                  title: {
+                    display: true,
+                    text: 'نرخ نزول / هزینه فرصت ماهانه (درصد)',
+                    font: { size: 11, weight: '600' }
+                  },
+                  grid: { color: 'rgba(148, 163, 184, 0.15)' },
+                  ticks: {
+                    stepSize: 1,
+                    font: { size: 11 },
+                    callback: (val) => `${Formatters.faInt.format(val)}٪`
+                  }
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'ارزش خالص هزینه (میلیون تومان)',
+                    font: { size: 11, weight: '600' }
+                  },
+                  grid: { color: 'rgba(148, 163, 184, 0.2)' },
+                  ticks: {
+                    font: { size: 11 },
+                    callback: (val) => Formatters.formatPlainMillion(val, false)
+                  }
+                }
+              }
+            }
+          });
+        } catch (err) {
+          console.error('Chart init error:', err);
+        }
+      },
+
+      setCashflowMode(mode) {
+        this.cashflowMode = mode;
+        if (this.lastResult) {
+          this.updateCashflowChart(this.lastResult);
+        }
+      },
+
+      updateAll(result) {
+        this.lastResult = result;
+        this.updateCashflowChart(result);
+        this.updateSensitivityChart(result);
+      },
+
+      updateCashflowChart(result) {
+        if (!this.cashflowChart) return;
+        const { params, schedule, pvLoan, pvDeposit } = result;
+
+        const labels = [];
+        const nominalData = [];
+        const pvData = [];
+        const barColors = [];
+
+        if (this.cashflowMode === 'full') {
+          labels.push('روز ۰ (سپرده)');
+          nominalData.push(-params.deposit);
+          pvData.push(-params.deposit);
+          barColors.push('rgba(225, 29, 72, 0.8)');
+
+          labels.push('دریافت وام');
+          nominalData.push(params.loan);
+          pvData.push(pvLoan);
+          barColors.push('rgba(16, 185, 129, 0.85)');
+
+          for (let i = 0; i < schedule.length; i++) {
+            const row = schedule[i];
+            labels.push(`ماه ${Formatters.faInt.format(row.index)}`);
+            nominalData.push(-row.installment);
+            pvData.push(-row.pvInstallment);
+            barColors.push(row.tag && row.tag.includes('کارمزد') ? 'rgba(217, 119, 6, 0.8)' : 'rgba(100, 116, 139, 0.72)');
+          }
+
+          labels.push('آزادسازی سپرده');
+          nominalData.push(params.deposit);
+          pvData.push(pvDeposit);
+          barColors.push('rgba(13, 148, 136, 0.85)');
+        } else {
+          for (let i = 0; i < schedule.length; i++) {
+            const row = schedule[i];
+            labels.push(`ماه ${Formatters.faInt.format(row.index)}`);
+            nominalData.push(row.installment);
+            pvData.push(row.pvInstallment);
+            barColors.push(row.tag && row.tag.includes('کارمزد') ? 'rgba(217, 119, 6, 0.82)' : 'rgba(15, 118, 110, 0.78)');
+          }
+        }
+
+        this.cashflowChart.data.labels = labels;
+        this.cashflowChart.data.datasets[0].data = nominalData;
+        this.cashflowChart.data.datasets[0].backgroundColor = barColors;
+        this.cashflowChart.data.datasets[0].label = this.cashflowMode === 'full'
+          ? 'جریان نقدی اسمی (م.ت)'
+          : 'مبلغ اسمی قسط ماهانه (م.ت)';
+        this.cashflowChart.data.datasets[1].data = pvData;
+        this.cashflowChart.data.datasets[1].label = this.cashflowMode === 'full'
+          ? 'ارزش فعلی امروز PV (م.ت)'
+          : 'ارزش فعلی قسط PV (م.ت)';
+        this.cashflowChart.update('none');
+      },
+
+      updateSensitivityChart(result) {
+        if (!this.sensitivityChart) return;
+        const points = result.sensitivityPoints.map((pt) => ({
+          x: pt.ratePercent,
+          y: pt.netPvCost
+        }));
+
+        const netPvAtIrr = result.monthlyIrrDecimal !== null
+          ? FinancialEngine.computeNetPvCostAtRate(result.monthlyIrrDecimal, result.params, result.schedule)
+          : 0;
+
+        this.sensitivityChart.data.datasets[0].data = points;
+        this.sensitivityChart.options.scales.x.max = result.maxSensitivityPercent;
+        this.sensitivityChart.options.scales.x.ticks.stepSize = result.maxSensitivityPercent > 20 ? 2 : 1;
+        this.sensitivityChart.options.plugins.referenceLinesData = {
+          irrPercent: result.monthlyIrrPercent,
+          netPvAtIrr,
+          marketRatePercent: result.params.monthlyMarketRate,
+          netPvAtMarket: result.netPvCost
+        };
+        this.sensitivityChart.update('none');
+      }
+    };
+
+    /**
+     * =========================================================================
+     * ماژول ۳: کنترلر رابط کاربری (UIController)
+     * مدیریت ورودی‌ها، پیش‌تنظیم‌ها، پنل دو تسهیلات، کارت‌ها، جدول و خروجی CSV
+     * =========================================================================
+     */
+    const UIController = {
+      state: { ...PRESETS.real },
+      tableUnit: 'million', // 'million' | 'toman'
+      latestResult: null,
+      toastTimer: null,
+
+      numericControls: [
+        { key: 'deposit', inputId: 'inputDeposit', sliderId: 'sliderDeposit', min: 0, max: 2000, isInt: false },
+        { key: 'loan', inputId: 'inputLoan', sliderId: 'sliderLoan', min: 10, max: 3000, isInt: false },
+        { key: 'months', inputId: 'inputMonths', sliderId: 'sliderMonths', min: 1, max: 120, isInt: true },
+        { key: 'waitingDays', inputId: 'inputWaitingDays', sliderId: 'sliderWaitingDays', min: 0, max: 365, isInt: true },
+        { key: 'annualFee', inputId: 'inputAnnualFee', sliderId: 'sliderAnnualFee', min: 0, max: 40, isInt: false },
+        { key: 'monthlyMarketRate', inputId: 'inputMarketRate', sliderId: 'sliderMarketRate', min: 0, max: 30, isInt: false }
+      ],
+
+      methodDescriptions: {
+        nasr_dual_exact: 'وام به دو تسهیلات تفکیک می‌شود: بخش معادل سپرده با کارمزد ۰٪ و بخش مازاد با قسط کارمزد در ماه اول و اقساط یکسان رُندشده به هزار تومان (مطابق دفترچه بانک).',
+        nasr_dual_anniversary: 'بخش سپرده با کارمزد ۰٪ است و در بخش مازاد، کارمزد سالانه روی مانده بدهی در ماه‌های ۱، ۱۳، ۲۵... و اصل در سایر ماه‌ها دریافت می‌شود.',
+        pmt: 'محاسبه قسط کاملاً مساوی بانکی (فرمول استاندارد PMT) روی کل مبلغ وام با نرخ کارمزد سالانه تقسیم بر ۱۲.',
+        declining: 'روش کاهشی کلاسیک: بازپرداخت مساوی اصل کل وام به همراه کارمزد ماهانه روی مانده بدهی کل.'
+      },
+
+      init() {
+        this.bindEvents();
+        ChartManager.init();
+        this.syncControlsFromState();
+        this.recalculateAndRender();
+      },
+
+      bindEvents() {
+        // همگام‌سازی دوطرفه فیلد عددی (فارسی/عربی/انگلیسی) و اسلایدر
+        this.numericControls.forEach((ctrl) => {
+          const inputEl = document.getElementById(ctrl.inputId);
+          const sliderEl = document.getElementById(ctrl.sliderId);
+
+          sliderEl.addEventListener('input', () => {
+            const val = ctrl.isInt ? parseInt(sliderEl.value, 10) : parseFloat(sliderEl.value);
+            this.state[ctrl.key] = val;
+            inputEl.value = String(val);
+            this.updatePresetButtonsHighlight();
+            this.recalculateAndRender();
+          });
+
+          inputEl.addEventListener('input', () => {
+            const cleaned = Formatters.normalizeNumericString(inputEl.value);
+            if (cleaned === '' || cleaned === '.' || cleaned === '-') return;
+            const parsed = ctrl.isInt ? parseInt(cleaned, 10) : parseFloat(cleaned);
+            if (!Number.isFinite(parsed)) return;
+
+            const clamped = Math.min(ctrl.max, Math.max(ctrl.min, parsed));
+            this.state[ctrl.key] = clamped;
+            sliderEl.value = String(clamped);
+            this.updatePresetButtonsHighlight();
+            this.recalculateAndRender();
+          });
+
+          inputEl.addEventListener('blur', () => {
+            const cleaned = Formatters.normalizeNumericString(inputEl.value);
+            let parsed = ctrl.isInt ? parseInt(cleaned, 10) : parseFloat(cleaned);
+            if (!Number.isFinite(parsed)) parsed = this.state[ctrl.key];
+            const clamped = Math.min(ctrl.max, Math.max(ctrl.min, parsed));
+            this.state[ctrl.key] = clamped;
+            inputEl.value = String(clamped);
+            sliderEl.value = String(clamped);
+            this.updatePresetButtonsHighlight();
+            this.recalculateAndRender();
+          });
+        });
+
+        // دکمه‌های سناریوی آماده
+        document.getElementById('btnPresetReal').addEventListener('click', () => {
+          this.loadPreset('real', 'سناریوی واقعی شما (۱۵۰/۸۰ میلیون، ۳۰ ماه) بارگذاری شد.');
+        });
+        document.getElementById('btnPreset200').addEventListener('click', () => {
+          this.loadPreset('sample200', 'سناریوی نمونه ۲۰۰ میلیونی (۱۱۰ م سپرده، ۳۶ ماه) بارگذاری شد.');
+        });
+
+        // دکمه‌های بازگردانی به پیش‌فرض
+        const resetHandler = () => this.loadPreset('real', 'تمام مقادیر به تنظیمات پیش‌فرض بازگردانی شد.');
+        document.getElementById('btnResetTop').addEventListener('click', resetHandler);
+        document.getElementById('btnResetInline').addEventListener('click', resetHandler);
+
+        // تغییر روش محاسبه اقساط
+        const selectMethod = document.getElementById('selectMethod');
+        selectMethod.addEventListener('change', () => {
+          this.state.repaymentMethod = selectMethod.value;
+          document.getElementById('methodDescription').textContent = this.methodDescriptions[selectMethod.value];
+          this.recalculateAndRender();
+        });
+
+        // تیک تنزیل مبلغ وام
+        const checkDiscount = document.getElementById('checkDiscountLoan');
+        checkDiscount.addEventListener('change', () => {
+          this.state.discountLoanForWaiting = checkDiscount.checked;
+          this.recalculateAndRender();
+        });
+
+        // تغییر نمای نمودار جریان نقدی
+        const btnInst = document.getElementById('btnCashflowInst');
+        const btnFull = document.getElementById('btnCashflowFull');
+        btnInst.addEventListener('click', () => {
+          btnInst.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer';
+          btnFull.className = 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
+          ChartManager.setCashflowMode('installments');
+        });
+        btnFull.addEventListener('click', () => {
+          btnFull.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer';
+          btnInst.className = 'px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
+          ChartManager.setCashflowMode('full');
+        });
+
+        // تغییر واحد نمایش جدول (میلیون تومان / تومان دقیق)
+        const btnMillion = document.getElementById('btnUnitMillion');
+        const btnToman = document.getElementById('btnUnitToman');
+        btnMillion.addEventListener('click', () => {
+          this.tableUnit = 'million';
+          btnMillion.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer';
+          btnToman.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
+          if (this.latestResult) this.renderScheduleTable(this.latestResult);
+        });
+        btnToman.addEventListener('click', () => {
+          this.tableUnit = 'toman';
+          btnToman.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-white text-teal-800 shadow-xs transition-all cursor-pointer';
+          btnMillion.className = 'px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 transition-all cursor-pointer';
+          if (this.latestResult) this.renderScheduleTable(this.latestResult);
+        });
+
+        // خروجی CSV
+        const exportHandler = () => this.exportScheduleCsv();
+        document.getElementById('btnExportCsvTop').addEventListener('click', exportHandler);
+        document.getElementById('btnExportCsvTable').addEventListener('click', exportHandler);
+      },
+
+      loadPreset(presetKey, toastMsg) {
+        const preset = PRESETS[presetKey];
+        if (!preset) return;
+        this.state = {
+          ...this.state,
+          deposit: preset.deposit,
+          loan: preset.loan,
+          months: preset.months,
+          waitingDays: preset.waitingDays,
+          annualFee: preset.annualFee,
+          monthlyMarketRate: preset.monthlyMarketRate,
+          ...(presetKey === 'real' ? {
+            repaymentMethod: preset.repaymentMethod,
+            discountLoanForWaiting: preset.discountLoanForWaiting
+          } : {})
+        };
+        this.syncControlsFromState();
+        this.recalculateAndRender();
+        if (toastMsg) this.showToast(toastMsg);
+      },
+
+      syncControlsFromState() {
+        this.numericControls.forEach((ctrl) => {
+          document.getElementById(ctrl.inputId).value = String(this.state[ctrl.key]);
+          document.getElementById(ctrl.sliderId).value = String(this.state[ctrl.key]);
+        });
+        document.getElementById('selectMethod').value = this.state.repaymentMethod;
+        document.getElementById('methodDescription').textContent = this.methodDescriptions[this.state.repaymentMethod];
+        document.getElementById('checkDiscountLoan').checked = this.state.discountLoanForWaiting;
+        this.updatePresetButtonsHighlight();
+      },
+
+      updatePresetButtonsHighlight() {
+        const isReal = this.state.deposit === PRESETS.real.deposit
+          && this.state.loan === PRESETS.real.loan
+          && this.state.months === PRESETS.real.months;
+        const is200 = this.state.deposit === PRESETS.sample200.deposit
+          && this.state.loan === PRESETS.sample200.loan
+          && this.state.months === PRESETS.sample200.months;
+
+        const btnReal = document.getElementById('btnPresetReal');
+        const btn200 = document.getElementById('btnPreset200');
+        const activeCls = 'px-2.5 py-2.5 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer bg-teal-50 border-teal-300 text-teal-900 shadow-xs';
+        const idleCls = 'px-2.5 py-2.5 rounded-xl text-xs font-bold border transition-all text-right cursor-pointer bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100';
+
+        btnReal.className = isReal ? activeCls : idleCls;
+        btn200.className = is200 ? activeCls : idleCls;
+      },
+
+      recalculateAndRender() {
+        try {
+          const result = FinancialEngine.calculateAll(this.state);
+          this.latestResult = result;
+          this.renderWarnings(result);
+          this.renderDecisionBanner(result);
+          this.renderDualFacilityPanel(result);
+          this.renderKpiCards(result);
+          this.renderScheduleTable(result);
+          ChartManager.updateAll(result);
+        } catch (err) {
+          console.error('Calculation error:', err);
+          this.showToast('خطایی در محاسبه رخ داد؛ لطفاً ورودی‌ها را بررسی کنید.');
+        }
+      },
+
+      renderWarnings(result) {
+        const el = document.getElementById('liquidityWarning');
+        const txt = document.getElementById('liquidityWarningText');
+        if (result.params.loan <= result.params.deposit) {
+          el.classList.remove('hidden');
+          txt.textContent = result.params.loan === result.params.deposit
+            ? 'مبلغ کل وام دقیقاً برابر سپرده بلوکه‌شده است! نقدینگی واقعی اولیه شما صفر تومان است.'
+            : `مبلغ سپرده بلوکه‌شده (${Formatters.formatMillion(result.params.deposit)}) از کل وام (${Formatters.formatMillion(result.params.loan)}) بیشتر است؛ بنابراین نقدینگی خالص اولیه منفی بوده و این تسهیلات توجیه اقتصادی ندارد.`;
+        } else {
+          el.classList.add('hidden');
+        }
+      },
+
+      renderDecisionBanner(result) {
+        const banner = document.getElementById('decisionBanner');
+        const badge = document.getElementById('decisionBadge');
+        const headline = document.getElementById('decisionHeadline');
+        const subtext = document.getElementById('decisionSubtext');
+        const heroIrr = document.getElementById('heroIrrMonthly');
+        const heroEar = document.getElementById('heroEarAnnual');
+        const heroMarket = document.getElementById('heroMarketRate');
+        const heroSpread = document.getElementById('heroSpreadLabel');
+        const reminder = document.getElementById('nominalFeeReminder');
+
+        const marketRate = result.params.monthlyMarketRate;
+        const irr = result.monthlyIrrPercent;
+        const ear = result.effectiveAnnualRatePercent;
+
+        heroMarket.textContent = Formatters.formatPercent(marketRate);
+        reminder.textContent = `توجه: کارمزد اسمی ${Formatters.formatPercent(result.params.annualFee)} سالانه معیار تصمیم‌گیری نیست؛ به دلیل بلوکه شدن ${Formatters.formatMillion(result.params.deposit)} سپرده، نرخ واقعی تأمین مالی (IRR) مبنای دقیق مقایسه با بازار است.`;
+
+        banner.classList.remove(
+          'bg-emerald-50/80', 'border-emerald-200',
+          'bg-rose-50/80', 'border-rose-200',
+          'bg-amber-50/80', 'border-amber-200'
+        );
+        badge.classList.remove('bg-emerald-600', 'bg-rose-600', 'bg-amber-600');
+
+        if (irr === null) {
+          banner.classList.add('bg-amber-50/80', 'border-amber-200');
+          badge.classList.add('bg-amber-600');
+          badge.textContent = 'عدم توجیه اقتصادی';
+          headline.textContent = 'نرخ بازده داخلی معتبر (IRR) برای این شرایط وجود ندارد';
+          subtext.textContent = 'به دلیل اینکه نقدینگی خالص اولیه صفر یا منفی است (یا سپرده و دوره انتظار بسیار بالاست)، این وام بازده اقتصادی مثبتی ایجاد نمی‌کند.';
+          heroIrr.textContent = 'ندارد';
+          heroIrr.className = 'text-2xl sm:text-3xl font-black text-rose-700 mt-1 tabular-nums';
+          heroEar.textContent = '—';
+          heroSpread.textContent = 'بدون نقطه سربه‌سر';
+          heroSpread.className = 'text-[11px] font-semibold text-rose-600 mt-1';
+          return;
+        }
+
+        heroIrr.textContent = Formatters.formatPercent(irr);
+        heroEar.textContent = Formatters.formatPercent(ear);
+        const spread = marketRate - irr;
+
+        if (Math.abs(spread) < 0.01) {
+          banner.classList.add('bg-amber-50/80', 'border-amber-200');
+          badge.classList.add('bg-amber-600');
+          badge.textContent = 'در نقطه سربه‌سر';
+          headline.textContent = 'نرخ واقعی وام برابر با نرخ نزول انتخابی شماست';
+          subtext.textContent = `نرخ واقعی تأمین مالی ماهانه (${Formatters.formatPercent(irr)}) تقریباً برابر نرخ فرصت انتخابی (${Formatters.formatPercent(marketRate)}) است.`;
+          heroIrr.className = 'text-2xl sm:text-3xl font-black text-amber-700 mt-1 tabular-nums';
+          heroSpread.textContent = 'اختلاف ناچیز (سربه‌سر)';
+          heroSpread.className = 'text-[11px] font-semibold text-amber-700 mt-1';
+        } else if (irr < marketRate) {
+          banner.classList.add('bg-emerald-50/80', 'border-emerald-200');
+          badge.classList.add('bg-emerald-600');
+          badge.textContent = 'وام به‌صرفه‌تر از نزول بازار است';
+          headline.textContent = `به‌صرفه: نرخ واقعی وام ${Formatters.formatPercent(spread)} در ماه ارزان‌تر از نزول است`;
+          subtext.textContent = `هزینه واقعی ماهانه این تسهیلات (${Formatters.formatPercent(irr)} ماهانه / ${Formatters.formatPercent(ear)} مؤثر سالانه) از نرخ نزول انتخابی شما (${Formatters.formatPercent(marketRate)} ماهانه) کمتر است.`;
+          heroIrr.className = 'text-2xl sm:text-3xl font-black text-teal-800 mt-1 tabular-nums';
+          heroSpread.textContent = `مزیت ${Formatters.formatPercent(spread)} در ماه نسبت به بازار`;
+          heroSpread.className = 'text-[11px] font-semibold text-emerald-700 mt-1';
+        } else {
+          banner.classList.add('bg-rose-50/80', 'border-rose-200');
+          badge.classList.add('bg-rose-600');
+          badge.textContent = 'وام گران‌تر از نرخ نزول انتخابی است';
+          headline.textContent = `غیراقتصادی: نرخ واقعی وام ${Formatters.formatPercent(Math.abs(spread))} در ماه گران‌تر از نزول است`;
+          subtext.textContent = `هزینه واقعی ماهانه این وام (${Formatters.formatPercent(irr)}) بالاتر از نرخ فرصت انتخابی شما (${Formatters.formatPercent(marketRate)}) تمام می‌شود و دریافت آن توصیه نمی‌شود.`;
+          heroIrr.className = 'text-2xl sm:text-3xl font-black text-rose-700 mt-1 tabular-nums';
+          heroSpread.textContent = `گران‌تر به میزان ${Formatters.formatPercent(Math.abs(spread))} در ماه`;
+          heroSpread.className = 'text-[11px] font-semibold text-rose-600 mt-1';
+        }
+      },
+
+      renderDualFacilityPanel(result) {
+        const section = document.getElementById('dualFacilitySection');
+        if (!result.isDual || !result.dualSummary) {
+          section.classList.add('hidden');
+          return;
+        }
+        section.classList.remove('hidden');
+
+        const { f1, f2, mode } = result.dualSummary;
+        const N = result.params.months;
+
+        document.getElementById('dualFacilitySubtitle').textContent =
+          `کل وام ${Formatters.formatMillion(result.params.loan)} = ${Formatters.formatMillion(f1.principal)} (سپرده ۰٪) + ${Formatters.formatMillion(f2.principal)} (مازاد کارمزددار) در ${Formatters.faInt.format(N)} ماه`;
+        document.getElementById('dualModeBadge').textContent =
+          mode === 'nasr_dual_exact' ? 'مطابق دفترچه اقساط بانک' : 'کارمزد در ماه‌های سالگرد (۱، ۱۳، ۲۵...)';
+
+        // کارت ۱: تسهیلات سپرده
+        document.getElementById('f1PrincipalVal').textContent = Formatters.formatMillion(f1.principal);
+        document.getElementById('f1PrincipalToman').textContent = Formatters.formatToman(f1.principal);
+        document.getElementById('f1TotalPaid').textContent = `${Formatters.formatMillion(f1.totalPaid, true)} (${Formatters.formatToman(f1.totalPaid)})`;
+
+        const f1List = document.getElementById('f1BreakdownList');
+        if (f1.principal <= 0) {
+          f1List.innerHTML = `<li class="text-slate-500">سپرده بلوکه‌شده صفر است؛ تسهیلات ۱ ایجاد نمی‌شود.</li>`;
+        } else if (N === 1) {
+          f1List.innerHTML = `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200/70">
+              <span class="text-slate-600">۱ قسط کل:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f1.lastAmount)}</span>
+            </li>`;
+        } else {
+          f1List.innerHTML = `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200/70">
+              <span class="text-slate-600"><strong class="text-teal-800">${Formatters.faInt.format(f1.regularCount)} قسط</strong> عادی:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f1.regularAmount)}</span>
+            </li>
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200/70">
+              <span class="text-slate-600"><strong class="text-teal-800">۱ قسط</strong> آخر (تعدیل رُند):</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f1.lastAmount)}</span>
+            </li>`;
+        }
+
+        // کارت ۲: تسهیلات مازاد
+        document.getElementById('f2PrincipalVal').textContent = Formatters.formatMillion(f2.principal);
+        document.getElementById('f2PrincipalToman').textContent = Formatters.formatToman(f2.principal);
+        document.getElementById('f2TotalPaid').textContent = `${Formatters.formatMillion(f2.totalPaid, true)} (${Formatters.formatToman(f2.totalPaid)})`;
+        document.getElementById('f2TotalFee').textContent = `${Formatters.formatMillion(f2.totalFee, true)} (${Formatters.formatToman(f2.totalFee)})`;
+
+        const f2List = document.getElementById('f2BreakdownList');
+        if (f2.principal <= 0) {
+          f2List.innerHTML = `<li class="text-slate-500">وام مازاد بر سپرده وجود ندارد (تسهیلات ۲ صفر است).</li>`;
+        } else if (N === 1) {
+          f2List.innerHTML = `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600">قسط واحد (اصل + کارمزد):</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f2.totalPaid)}</span>
+            </li>`;
+        } else if (mode === 'nasr_dual_exact') {
+          f2List.innerHTML = `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600"><strong class="text-amber-800">قسط اول</strong> (کارمزد سال اول):</span>
+              <span class="font-extrabold text-amber-900 tabular-nums">${Formatters.formatToman(f2.firstAmount)}</span>
+            </li>
+            ${f2.regularCount > 0 ? `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600"><strong class="text-slate-800">${Formatters.faInt.format(f2.regularCount)} قسط</strong> میانی:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f2.regularAmount)}</span>
+            </li>` : ''}
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600"><strong class="text-slate-800">۱ قسط</strong> آخر:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f2.lastAmount)}</span>
+            </li>`;
+        } else {
+          // حالت کارمزد سالانه روی مانده در ماه‌های ۱، ۱۳، ۲۵...
+          const feeBadges = f2.annualFeeItems
+            .map((item) => `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 text-[11px] font-bold tabular-nums">ماه ${Formatters.faInt.format(item.month)}: ${Formatters.formatToman(item.amount, false)} ت</span>`)
+            .join(' ');
+          f2List.innerHTML = `
+            <li class="bg-white rounded-lg px-3 py-2 border border-amber-200/70 space-y-1.5">
+              <div class="text-slate-600 font-semibold">اقساط کارمزد سالانه (${Formatters.faInt.format(f2.annualFeeItems.length)} نوبت):</div>
+              <div class="flex flex-wrap gap-1.5">${feeBadges}</div>
+            </li>
+            ${f2.regularCount > 0 ? `
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600"><strong class="text-slate-800">${Formatters.faInt.format(f2.regularCount)} قسط</strong> اصل عادی:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f2.regularAmount)}</span>
+            </li>` : ''}
+            <li class="flex items-center justify-between gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200/70">
+              <span class="text-slate-600"><strong class="text-slate-800">۱ قسط</strong> اصل پایانی:</span>
+              <span class="font-extrabold text-slate-900 tabular-nums">${Formatters.formatToman(f2.lastAmount)}</span>
+            </li>`;
+        }
+      },
+
+      renderKpiCards(result) {
+        // نقدینگی واقعی اولیه
+        const liqEl = document.getElementById('kpiNetLiquidity');
+        liqEl.textContent = Formatters.formatMillion(result.netInitialLiquidity);
+        liqEl.className = result.netInitialLiquidity > 0
+          ? 'text-xl font-extrabold text-teal-800 mt-2 tabular-nums'
+          : 'text-xl font-extrabold text-rose-600 mt-2 tabular-nums';
+        document.getElementById('kpiNetLiquidityToman').textContent = Formatters.formatToman(result.netInitialLiquidity);
+
+        // قسط اول، میانی، آخر (مجموع دو تسهیلات)
+        document.getElementById('kpiFirstInst').textContent =
+          `${Formatters.formatMillion(result.firstInstallment, true)} (${Formatters.formatToman(result.firstInstallment, false)} ت)`;
+        document.getElementById('kpiMidInst').textContent =
+          `${Formatters.formatMillion(result.midInstallment, true)} (${Formatters.formatToman(result.midInstallment, false)} ت)`;
+        document.getElementById('kpiLastInst').textContent =
+          `${Formatters.formatMillion(result.lastInstallment, true)} (${Formatters.formatToman(result.lastInstallment, false)} ت)`;
+
+        // مجموع اقساط و مجموع کارمزد
+        document.getElementById('kpiTotalPayments').textContent = Formatters.formatMillion(result.totalInstallments, true);
+        document.getElementById('kpiTotalFees').textContent = Formatters.formatMillion(result.totalFees, true);
+        document.getElementById('kpiTotalFeesToman').textContent = `کارمزد دقیق: ${Formatters.formatToman(result.totalFees)}`;
+
+        // ارزش امروز سپرده و افت ارزش
+        document.getElementById('kpiPvDeposit').textContent = Formatters.formatMillion(result.pvDeposit);
+        document.getElementById('kpiDepositLoss').textContent =
+          `${Formatters.formatMillion(result.depositLoss)} (${Formatters.formatPercent(result.depositLossPercent)})`;
+
+        // ارزش امروز مجموع اقساط
+        document.getElementById('kpiPvPayments').textContent = Formatters.formatMillion(result.pvPayments);
+        document.getElementById('kpiPvPaymentsSub').textContent =
+          `معادل ${Formatters.formatToman(result.pvPayments)} با نرخ ${Formatters.formatPercent(result.params.monthlyMarketRate)}`;
+
+        // ارزش خالص هزینه (Net PV Cost)
+        const netPvEl = document.getElementById('kpiNetPvCost');
+        const netPvMeaning = document.getElementById('kpiNetPvMeaning');
+        const netPvIconWrap = document.getElementById('kpiNetPvIconWrap');
+        const netPvCard = document.getElementById('kpiNetPvCard');
+
+        netPvEl.textContent = Formatters.formatMillion(result.netPvCost, false, true);
+        netPvCard.classList.remove('border-emerald-200', 'border-rose-200', 'border-slate-200/80');
+        netPvIconWrap.classList.remove('bg-emerald-50', 'text-emerald-700', 'bg-rose-50', 'text-rose-600');
+
+        if (result.netPvCost < -1e-9) {
+          netPvCard.classList.add('border-emerald-200');
+          netPvIconWrap.classList.add('bg-emerald-50', 'text-emerald-700');
+          netPvEl.className = 'text-xl font-extrabold text-emerald-700 mt-2 tabular-nums';
+          netPvMeaning.className = 'text-[11px] font-semibold text-emerald-700 mt-1 leading-snug';
+          netPvMeaning.textContent = `صرفه‌جویی خالص به ارزش امروز: ${Formatters.formatMillion(Math.abs(result.netPvCost))} نسبت به نزول بازار`;
+        } else if (result.netPvCost > 1e-9) {
+          netPvCard.classList.add('border-rose-200');
+          netPvIconWrap.classList.add('bg-rose-50', 'text-rose-600');
+          netPvEl.className = 'text-xl font-extrabold text-rose-600 mt-2 tabular-nums';
+          netPvMeaning.className = 'text-[11px] font-semibold text-rose-600 mt-1 leading-snug';
+          netPvMeaning.textContent = `هزینه/زیان خالص نسبت به نزول ${Formatters.formatPercent(result.params.monthlyMarketRate)} ماهانه`;
+        } else {
+          netPvCard.classList.add('border-slate-200/80');
+          netPvIconWrap.classList.add('bg-emerald-50', 'text-emerald-700');
+          netPvEl.className = 'text-xl font-extrabold text-slate-800 mt-2 tabular-nums';
+          netPvMeaning.className = 'text-[11px] font-semibold text-slate-500 mt-1 leading-snug';
+          netPvMeaning.textContent = 'در نقطه سربه‌سر (بدون سود و زیان خالص)';
+        }
+      },
+
+      renderScheduleTable(result) {
+        const thead = document.getElementById('scheduleTableHead');
+        const tbody = document.getElementById('scheduleTableBody');
+        const tfoot = document.getElementById('scheduleTableFoot');
+        const subtitle = document.getElementById('tableSummarySubtitle');
+
+        const isToman = this.tableUnit === 'toman';
+        const unitLabel = isToman ? 'تومان' : 'میلیون تومان';
+        const fmtVal = (val) => isToman ? Formatters.formatToman(val, false) : Formatters.formatPlainMillion(val, true);
+
+        subtitle.textContent = `${Formatters.faInt.format(result.schedule.length)} قسط ماهانه • واحد نمایش: ${unitLabel} • تنزیل با نرخ ${Formatters.formatPercent(result.params.monthlyMarketRate)} ماهانه`;
+
+        if (result.isDual) {
+          thead.innerHTML = `
+            <tr>
+              <th class="py-3 px-3.5 border-b border-slate-200">ماه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">تسهیلات ۱ (سپرده - ۰٪)</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">تسهیلات ۲ (مازاد)</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">جمع قسط ماهانه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">مانده اصل کل</th>
+              <th class="py-3 px-3.5 border-b border-slate-200 text-teal-800">ارزش فعلی قسط (PV)</th>
+            </tr>
+          `;
+        } else {
+          thead.innerHTML = `
+            <tr>
+              <th class="py-3 px-3.5 border-b border-slate-200">ماه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">مانده اصل ابتدای ماه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">اصل قسط</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">کارمزد ماهانه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200">جمع قسط ماهانه</th>
+              <th class="py-3 px-3.5 border-b border-slate-200 text-teal-800">ارزش فعلی قسط (PV)</th>
+            </tr>
+          `;
+        }
+
+        const fragment = document.createDocumentFragment();
+        const rows = result.schedule;
+
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
+          const isFeeHighlight = row.tag && row.tag.includes('کارمزد');
+          const tr = document.createElement('tr');
+          tr.className = isFeeHighlight
+            ? 'bg-amber-50/75 hover:bg-amber-100/60 transition-colors'
+            : (i % 2 === 0 ? 'bg-white hover:bg-teal-50/40 transition-colors' : 'bg-slate-50/50 hover:bg-teal-50/40 transition-colors');
+
+          // ستون ۱: شماره ماه + نشان کارمزد سالانه در صورت وجود
+          const tdMonth = document.createElement('td');
+          tdMonth.className = 'py-2.5 px-3.5 whitespace-nowrap font-bold text-slate-800';
+          const monthSpan = document.createElement('span');
+          monthSpan.textContent = Formatters.faInt.format(row.index);
+          tdMonth.appendChild(monthSpan);
+
+          if (isFeeHighlight) {
+            const badge = document.createElement('span');
+            badge.className = 'mr-1.5 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-200/80 text-amber-900';
+            badge.textContent = 'کارمزد سالانه';
+            tdMonth.appendChild(badge);
+          } else if (row.tag === 'قسط پایانی') {
+            const badge = document.createElement('span');
+            badge.className = 'mr-1.5 inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-teal-100 text-teal-800';
+            badge.textContent = 'پایانی';
+            tdMonth.appendChild(badge);
+          }
+          tr.appendChild(tdMonth);
+
+          const otherCells = result.isDual
+            ? [
+                { text: fmtVal(row.f1Inst), cls: 'text-slate-700' },
+                { text: fmtVal(row.f2Inst), cls: isFeeHighlight ? 'font-bold text-amber-800' : 'text-slate-700' },
+                { text: fmtVal(row.installment), cls: 'font-extrabold text-slate-900' },
+                { text: fmtVal(row.closingBalance), cls: 'text-slate-500' },
+                { text: fmtVal(row.pvInstallment), cls: 'font-bold text-teal-800' }
+              ]
+            : [
+                { text: fmtVal(row.openingBalance), cls: 'text-slate-600' },
+                { text: fmtVal(row.principalPart), cls: 'text-slate-700' },
+                { text: fmtVal(row.feePart), cls: 'text-amber-700 font-medium' },
+                { text: fmtVal(row.installment), cls: 'font-extrabold text-slate-900' },
+                { text: fmtVal(row.pvInstallment), cls: 'font-bold text-teal-800' }
+              ];
+
+          for (let c = 0; c < otherCells.length; c++) {
+            const td = document.createElement('td');
+            td.className = `py-2.5 px-3.5 whitespace-nowrap ${otherCells[c].cls}`;
+            td.textContent = otherCells[c].text;
+            tr.appendChild(td);
+          }
+
+          fragment.appendChild(tr);
+        }
+
+        tbody.textContent = '';
+        tbody.appendChild(fragment);
+
+        if (result.isDual) {
+          tfoot.innerHTML = `
+            <tr>
+              <td class="py-3 px-3.5 whitespace-nowrap">جمع کل (${Formatters.faInt.format(rows.length)} قسط)</td>
+              <td class="py-3 px-3.5 whitespace-nowrap">${fmtVal(result.totalF1)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap text-amber-300">${fmtVal(result.totalF2)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap">${fmtVal(result.totalInstallments)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap text-slate-400">۰</td>
+              <td class="py-3 px-3.5 whitespace-nowrap text-emerald-300">${fmtVal(result.pvPayments)}</td>
+            </tr>
+          `;
+        } else {
+          tfoot.innerHTML = `
+            <tr>
+              <td class="py-3 px-3.5 whitespace-nowrap" colspan="2">جمع کل (${Formatters.faInt.format(rows.length)} قسط)</td>
+              <td class="py-3 px-3.5 whitespace-nowrap">${fmtVal(result.params.loan)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap text-amber-300">${fmtVal(result.totalFees)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap">${fmtVal(result.totalInstallments)}</td>
+              <td class="py-3 px-3.5 whitespace-nowrap text-emerald-300">${fmtVal(result.pvPayments)}</td>
+            </tr>
+          `;
+        }
+      },
+
+      exportScheduleCsv() {
+        if (!this.latestResult) return;
+        try {
+          const r = this.latestResult;
+          const lines = [];
+
+          if (r.isDual) {
+            lines.push([
+              'ماه',
+              'شرح',
+              'تسهیلات ۱ سپرده (میلیون تومان)',
+              'تسهیلات ۱ سپرده (تومان)',
+              'تسهیلات ۲ مازاد (میلیون تومان)',
+              'تسهیلات ۲ مازاد (تومان)',
+              'جمع قسط ماهانه (میلیون تومان)',
+              'جمع قسط ماهانه (تومان)',
+              'مانده اصل کل (میلیون تومان)',
+              'ارزش فعلی قسط PV (میلیون تومان)'
+            ].join(','));
+
+            r.schedule.forEach((row) => {
+              lines.push([
+                row.index,
+                row.tag || 'قسط عادی',
+                row.f1Inst.toFixed(3),
+                Math.round(row.f1Inst * 1_000_000),
+                row.f2Inst.toFixed(3),
+                Math.round(row.f2Inst * 1_000_000),
+                row.installment.toFixed(3),
+                Math.round(row.installment * 1_000_000),
+                row.closingBalance.toFixed(3),
+                row.pvInstallment.toFixed(4)
+              ].join(','));
+            });
+
+            lines.push([
+              'جمع کل',
+              '',
+              r.totalF1.toFixed(3),
+              Math.round(r.totalF1 * 1_000_000),
+              r.totalF2.toFixed(3),
+              Math.round(r.totalF2 * 1_000_000),
+              r.totalInstallments.toFixed(3),
+              Math.round(r.totalInstallments * 1_000_000),
+              '0.000',
+              r.pvPayments.toFixed(4)
+            ].join(','));
+          } else {
+            lines.push([
+              'ماه',
+              'مانده اصل ابتدای ماه (میلیون تومان)',
+              'اصل قسط (میلیون تومان)',
+              'کارمزد ماهانه (میلیون تومان)',
+              'جمع قسط ماهانه (میلیون تومان)',
+              'جمع قسط ماهانه (تومان)',
+              'ارزش فعلی قسط PV (میلیون تومان)'
+            ].join(','));
+
+            r.schedule.forEach((row) => {
+              lines.push([
+                row.index,
+                row.openingBalance.toFixed(3),
+                row.principalPart.toFixed(3),
+                row.feePart.toFixed(3),
+                row.installment.toFixed(3),
+                Math.round(row.installment * 1_000_000),
+                row.pvInstallment.toFixed(4)
+              ].join(','));
+            });
+
+            lines.push([
+              'جمع کل',
+              '',
+              r.params.loan.toFixed(3),
+              r.totalFees.toFixed(3),
+              r.totalInstallments.toFixed(3),
+              Math.round(r.totalInstallments * 1_000_000),
+              r.pvPayments.toFixed(4)
+            ].join(','));
+          }
+
+          const csvContent = '\uFEFF' + lines.join('\r\n');
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'nasr-loan-schedule.csv';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+
+          this.showToast('فایل nasr-loan-schedule.csv با موفقیت دانلود شد.');
+        } catch (err) {
+          console.error('CSV export error:', err);
+          this.showToast('خطا در ساخت فایل CSV.');
+        }
+      },
+
+      showToast(message) {
+        const container = document.getElementById('toastContainer');
+        document.getElementById('toastMessage').textContent = message;
+        container.classList.remove('opacity-0', 'translate-y-3');
+        container.classList.add('opacity-100', 'translate-y-0');
+
+        if (this.toastTimer) clearTimeout(this.toastTimer);
+        this.toastTimer = setTimeout(() => {
+          container.classList.remove('opacity-100', 'translate-y-0');
+          container.classList.add('opacity-0', 'translate-y-3');
+        }, 2800);
+      }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      UIController.init();
+    });
+  </script>
+</body>
+</html>
